@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>楚汉阵营人格测试 · 你是乱世中的谁？</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI','华文楷体','KaiTi','Microsoft YaHei',sans-serif; }
+  body { min-height:100vh; background:linear-gradient(145deg,#2e1e0f 0%,#3d2b1a 100%); display:flex; justify-content:center; align-items:center; padding:20px; }
+  .game-container { width:100%; max-width:820px; background:#fdf3e0; border-radius:48px 48px 32px 32px; box-shadow:0 20px 30px rgba(0,0,0,.6),inset 0 1px 4px rgba(255,240,200,.6); padding:28px 30px 36px; border:2px solid #c9a87c; }
+  h1 { text-align:center; font-size:2.2rem; font-weight:600; color:#3b2a18; letter-spacing:4px; text-shadow:2px 2px 0 #e6d2b5; margin-bottom:6px; font-family:'华文楷体','KaiTi',cursive; }
+  .subhead { text-align:center; color:#7a5f44; font-size:.95rem; border-bottom:2px dashed #bb9b7a; padding-bottom:18px; margin-bottom:18px; letter-spacing:1px; }
+  .progress-area { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; color:#5e412b; font-weight:500; background:#ebdccb; padding:8px 16px; border-radius:40px; }
+  .progress-bar { flex:1; height:10px; background:#cdb59b; border-radius:10px; margin:0 15px; overflow:hidden; }
+  .progress-fill { height:100%; width:0%; background:#a77b53; border-radius:10px; transition:width .3s ease; }
+  .question-box { background:#fffbf2; border-radius:28px; padding:24px 26px; box-shadow:inset 0 0 0 1px #fff3e1,0 8px 12px rgba(80,50,20,.1); margin-bottom:20px; border:1px solid #dbbb99; }
+  .question-text { font-size:1.3rem; line-height:1.6; color:#2b1c0e; font-weight:600; margin-bottom:24px; padding-left:8px; border-left:6px solid #b3814b; font-family:'华文楷体','KaiTi',cursive; }
+  .options { display:flex; flex-direction:column; gap:12px; }
+  .option-btn { display:block; width:100%; text-align:left; background:#f3e7d9; border:2px solid #d8bea3; padding:14px 20px; border-radius:40px; font-size:1rem; color:#31200e; cursor:pointer; transition:all .2s; font-weight:500; letter-spacing:.3px; box-shadow:0 2px 0 #bb9b7a; line-height:1.5; }
+  .option-btn:hover { background:#e9d7c2; border-color:#b18154; transform:scale(1.01); }
+  .option-btn:active { transform:scale(.99); box-shadow:0 0 0 #bb9b7a; }
+  .option-btn.selected { background:#d4b18b; border-color:#7a4f29; color:#1f0f00; box-shadow:inset 0 0 0 2px #f3e0ca,0 3px 0 #5e3e20; font-weight:600; }
+  .nav-buttons { display:flex; justify-content:space-between; margin-top:12px; }
+  .btn { padding:12px 36px; border:none; border-radius:40px; font-size:1.1rem; font-weight:600; cursor:pointer; transition:.2s; letter-spacing:2px; font-family:'华文楷体','KaiTi',cursive; }
+  .btn-primary { background:#8b5e3c; color:#fdf3e0; box-shadow:0 5px 0 #4f351d; }
+  .btn-primary:active { transform:translateY(4px); box-shadow:0 1px 0 #4f351d; }
+  .btn-primary:disabled { opacity:.5; transform:translateY(0); box-shadow:0 5px 0 #4f351d; cursor:not-allowed; }
+  .btn-secondary { background:#d9c7b1; color:#3b2a18; box-shadow:0 5px 0 #a5896b; }
+  .btn-secondary:active { transform:translateY(4px); box-shadow:0 1px 0 #a5896b; }
+  .result-area { background:#fffbf2; border-radius:30px; padding:28px 26px; margin-top:16px; border:2px solid #d4b18b; box-shadow:inset 0 0 0 3px #fef6e8; display:none; }
+  .result-area.show { display:block; }
+  .result-title { font-size:2rem; font-weight:700; color:#4b2e15; text-align:center; border-bottom:3px double #b98e64; padding-bottom:16px; margin-bottom:18px; font-family:'华文楷体','KaiTi',cursive; letter-spacing:3px; }
+  .result-name { font-size:2.8rem; text-align:center; color:#733f1a; font-weight:800; margin:12px 0 8px; text-shadow:3px 3px 0 #e3cdb5; }
+  .result-desc { font-size:1.1rem; line-height:1.8; color:#2f1d0c; background:#f5e8d8; padding:20px 24px; border-radius:24px; margin:18px 0; border-left:8px solid #a77b53; }
+  .result-note { font-size:.95rem; color:#7b5f44; text-align:center; font-style:italic; border-top:1px dashed #c9a87c; padding-top:16px; }
+  .hidden { display:none !important; }
+  .intro-desc { background:#efdfce; border-radius:24px; padding:16px 20px; color:#3d2a16; font-size:1rem; margin-bottom:10px; border:1px solid #d2b48c; line-height:1.7; }
+  .tag-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .tag { background:#d4b18b; color:#2b1c0e; border-radius:20px; padding:4px 12px; font-size:.85rem; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="game-container">
+  <h1>楚汉 · 人格</h1>
+  <div class="subhead">十道正史抉择 · 测你是乱世中的谁</div>
+
+  <!-- 开始界面 -->
+  <div id="introArea">
+    <div class="intro-desc">
+      ⚔️ 每题均取材于《史记》《汉书》记载的真实事件，部分情境做了合理推演。<br>
+      你的每一次选择都会为特定人物"投票"，最终由<b>选项组合</b>直接映射到唯一人物。<br>
+      <span style="color:#7a4f29;font-weight:600;">（相同选项组合必然得到相同结果）</span>
+    </div>
+    <div style="display:flex; justify-content:center; margin-top:24px;">
+      <button class="btn btn-primary" id="startBtn" style="padding:16px 60px;">开始测试</button>
+    </div>
+  </div>
+
+  <!-- 测试主体 -->
+  <div id="quizArea" class="hidden">
+    <div class="progress-area">
+      <span id="progressText">1 / 10</span>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:10%"></div></div>
+      <span>⚔️</span>
+    </div>
+    <div class="question-box">
+      <div class="question-text" id="questionText"></div>
+      <div class="options" id="optionsContainer"></div>
+    </div>
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="prevBtn" disabled>上一题</button>
+      <button class="btn btn-primary" id="nextBtn" disabled>下一题</button>
+    </div>
+  </div>
+
+  <!-- 结果界面 -->
+  <div id="resultArea" class="result-area">
+    <div class="result-title">✦ 乱世印记 ✦</div>
+    <div class="result-name" id="resultName"></div>
+    <div class="result-desc" id="resultDesc"></div>
+    <div class="result-note">“王侯将相宁有种乎？——你的选择即是你的轨迹。”</div>
+    <div style="display:flex; justify-content:center; margin-top:28px;">
+      <button class="btn btn-primary" id="restartBtn" style="padding:14px 50px;">再测一次</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// 人物库（楚汉主要人物，所有阵营）
+// priority 越小优先级越高（仅作为极端并列时的最终兜底）
+// ============================================================
+const characters = [
+  { id:'liubang',  name:'刘邦',   desc:'宽厚长者，善于用人，终成帝业。你懂得在乱世中聚拢人心，能屈能伸，是团队中天然的核心。看似随性，实则每一步都踩在人心最柔软的地方。', priority:1 },
+  { id:'xiangyu',  name:'项羽',   desc:'力能扛鼎，战神降世。你勇猛果敢，重情重义，但有时过于刚愎，宁愿轰轰烈烈也不愿苟且。你相信实力说话，却常忽略人心的弯绕。', priority:2 },
+  { id:'hanxin',   name:'韩信',   desc:'国士无双，兵仙下凡。你才华横溢，善于谋略，但性格中带着孤傲，总在寻找真正赏识自己的人。你渴望被看见，又不愿低头。', priority:3 },
+  { id:'zhangliang',name:'张良',  desc:'运筹帷幄，决胜千里。你心思缜密，洞察时局，常能四两拨千斤，是团队中不可或缺的智囊。你懂得何时进，更懂得何时退。', priority:4 },
+  { id:'xiaoh',    name:'萧何',   desc:'镇国家，抚百姓，给馈饷。你稳重可靠，善于后勤与治理，是让一切运转起来的基石。你不争台前风光，却握着最关键的齿轮。', priority:5 },
+  { id:'fanzeng',  name:'范增',   desc:'奇谋之士，忠心耿耿。你眼光毒辣，直言不讳，虽有时不被采纳，但始终坚守自己的判断。你最大的痛苦是看得太清，却无力回天。', priority:6 },
+  { id:'yingbu',   name:'英布',   desc:'骁勇善战的九江王。你勇猛而现实，在乱世中不断权衡利弊，寻找最有利的立足之地。你不轻易押注，一旦押注就全力以赴。', priority:7 },
+  { id:'pengyue',  name:'彭越',   desc:'游击战的鼻祖。你灵活机动，善于在敌后骚扰，从不与强敌硬碰硬，是令对手头疼的存在。你相信持久战，相信积小胜为大胜。', priority:8 },
+  { id:'xiangbo',  name:'项伯',   desc:'重情重义，在鸿门宴上护佑刘邦。你讲究情面，常在关键时刻为朋友两肋插刀，哪怕背负争议。你相信人情大于立场。', priority:9 },
+  { id:'longju',   name:'龙且',   desc:'项羽麾下猛将。你忠心不二，作战勇猛，愿为赏识自己的主公赴汤蹈火。你简单直接，认准了就一条路走到黑。', priority:10 },
+  { id:'chenping', name:'陈平',   desc:'六出奇计，离间项羽范增。你足智多谋，善于用非常手段解决难题，不拘泥于道德教条。你相信结果比过程更重要。', priority:11 },
+  { id:'caoshen',  name:'曹参',   desc:'身经百战的汉初功臣。你踏实肯干，执行力强，是团队中冲锋陷阵的可靠战将。你不多话，但交给你的事从不掉链子。', priority:12 },
+  { id:'zhoubo',   name:'周勃',   desc:'厚重少文，安刘氏者必勃也。你质朴刚强，在关键时刻能担起大任，是值得托付的人。你不善言辞，但行动比谁都实在。', priority:13 },
+  { id:'fankuai',  name:'樊哙',   desc:'鸿门宴上闯帐护主。你忠勇豪爽，危急时刻敢于挺身而出，是主公最信任的贴身护卫。你活得痛快，也让人痛快。', priority:14 },
+  { id:'yuji',     name:'虞姬',   desc:'霸王别姬，千古绝唱。你重情重义，愿与所爱之人同生共死，有着超越胜负的深情。你看重的是人，不是江山。', priority:15 },
+  { id:'lvzhi',    name:'吕雉',   desc:'汉高后，坚毅果决。你有着强烈的意志力，在逆境中能隐忍，在顺境中能掌控全局。你从不忘记自己受过的委屈。', priority:16 },
+  { id:'zhanghan', name:'章邯',   desc:'秦末最后的名将。你曾力挽狂澜，但面对大势也懂得审时度势，做出最现实的选择。你明白，有时候活着比气节更难。', priority:17 },
+  { id:'sima',     name:'司马欣', desc:'秦将，后降楚。你善于在乱世中保全自身，懂得观察风向，不轻易押注。你相信留得青山在，不怕没柴烧。', priority:18 },
+  { id:'dongyi',   name:'董翳',   desc:'秦将，后降楚。你为人谨慎，不愿冒太大风险，倾向于跟随强者的脚步。你相信大树底下好乘凉。', priority:19 },
+  { id:'weibao',   name:'魏豹',   desc:'魏王豹，反复无常。你性格多变，容易受环境影响，常在各方势力间摇摆。你总在寻找那个最"对"的答案。', priority:20 },
+  { id:'tianrong', name:'田荣',   desc:'齐地霸主。你性格刚烈，不甘受人摆布，敢于起兵反抗不公的封赏。你最恨别人替你安排命运。', priority:21 },
+  { id:'tianheng', name:'田横',   desc:'齐王田横，五百士殉义。你重气节，宁死不屈，把尊严看得比生命更重要。你相信有些东西不能拿来交换。', priority:22 },
+  { id:'zhaoxie',  name:'赵歇',   desc:'赵王歇。你虽身处王位，但常受制于人，在乱世中努力维持自己的立场。你懂得在夹缝中求存，不轻易亮底牌。', priority:23 },
+  { id:'zhanger',  name:'张耳',   desc:'汉初常山王。你经历丰富，善于交际，能在复杂的局势中为自己谋得位置。你相信人脉就是活路。', priority:24 },
+  { id:'chenyu',   name:'陈馀',   desc:'与张耳有刎颈之交后反目。你重原则，对背叛难以释怀，有着强烈的爱憎。你眼里揉不得沙子。', priority:25 },
+  { id:'hanshin',  name:'韩王信', desc:'韩国宗室后裔。你有着一定的身份认同，但在强权面前也常需要妥协。你明白身份是资本，也是枷锁。', priority:26 },
+  { id:'wurui',    name:'吴芮',   desc:'长沙王，汉初异姓王中少数善终者。你低调谨慎，善于在乱世中保全家族。你相信不争就是最大的争。', priority:27 },
+  { id:'gongao',   name:'共敖',   desc:'临江王。你偏安一隅，不轻易卷入纷争，力求在自己的领地内维持稳定。你觉得管好自己的一亩三分地最实在。', priority:28 },
+  { id:'zangtu',   name:'臧荼',   desc:'燕王，后反汉被灭。你有些野心，但有时会高估自己的实力，做出冒险的决定。你总想再往上够一够。', priority:29 },
+  { id:'sheny',    name:'申阳',   desc:'河南王。你善于观察局势，在夹缝中求生存，不会轻易做出头鸟。你相信枪打出头鸟，稳字当头。', priority:30 },
+  { id:'jixin',    name:'纪信',   desc:'荥阳之战中假扮刘邦诈降，助刘邦脱身。你忠勇无双，关键时刻愿意牺牲自己成全大局。你心里装的是"值得"二字。', priority:31 },
+  { id:'zhouke',   name:'周苛',   desc:'荥阳守将，被俘后大骂项羽不屈而死。你刚烈正直，宁折不弯，把气节看得比命重。你信的是"有所不为"。', priority:32 },
+];
+const charMap = {};
+characters.forEach(c => charMap[c.id] = c);
+
+// ============================================================
+// 题目数据
+// 每个选项带 tags：一组人物 id。答完所有题后统计 tags 出现次数，
+// 出现次数最多的人物即结果；并列时按 priority 裁决。
+// 这种方式下，结果完全由"选项组合"决定，不涉及分数计算。
+// ============================================================
+const questions = [
+  {
+    text:'秦军围巨鹿，楚怀王命宋义为上将军、项羽为次将救赵。宋义屯兵安阳四十六日不进，并下令"猛如虎，狠如羊，贪如狼，强不可使者，皆斩之"。你作为项羽，会怎么做？',
+    options:[
+      { text:'清晨借汇报军情之名闯入帐中，斩宋义首级，对全军宣布"宋义与齐谋反，楚王密令诛之"，随后破釜沉舟渡河。', tags:['xiangyu','longju','yingbu'] },
+      { text:'强压怒火，先派亲信回彭城向楚怀王密报宋义按兵不动，请求正式命令后再行动。', tags:['fanzeng','zhanghan','sima'] },
+      { text:'私下联络英布、蒲将军等将领，试探他们对宋义的态度，暗中布局等待时机。', tags:['hanxin','chenping','zhangliang'] },
+      { text:'认为宋义此策有道理，秦赵相争正是坐收渔利之时，不如静观其变。', tags:['liubang','xiaoh','caoshen'] }
+    ]
+  },
+  {
+    text:'你率先攻入关中，秦王子婴素车白马、颈系丝带、手捧玉玺符节出降。诸将中有人高喊"杀此秦贼以谢天下"。此刻你心里怎么想？',
+    options:[
+      { text:'杀。秦室余孽不可留，且楚怀王有约"先入关中者王之"，我杀他正是立威。', tags:['xiangyu','longju','fankuai'] },
+      { text:'不杀。人已服降，杀之不祥。且秦地百姓正看着，留他性命更能收拢人心。', tags:['liubang','zhangliang','xiaoh'] },
+      { text:'不表态，先看诸位将领和谋士的意见，再决定如何处置。', tags:['zhoubo','caoshen','xiangbo'] },
+      { text:'劝主帅杀之以绝后患，但需公告天下是"奉怀王之命讨罪"。', tags:['fanzeng','chenping','yingbu'] }
+    ]
+  },
+  {
+    text:'鸿门宴上，范增三次举起所佩玉玦示意项羽下决心杀刘邦，项羽沉默不应。范增起身出帐，对项庄说"君王为人不忍，若入前为寿，寿毕，请以剑舞，因击沛公于坐，杀之"。此刻如果你是项伯，你会？',
+    options:[
+      { text:'立即起身对项庄说"舞剑需有对手"，拔剑与项庄对舞，以身翼蔽刘邦。', tags:['xiangbo','zhangliang'] },
+      { text:'暗中派人通知张良，让刘邦借如厕之机赶紧离开。', tags:['zhangliang','chenping','liubang'] },
+      { text:'认为这是军机大事，不应因私情干预，静观其变。', tags:['fanzeng','longju','xiangyu'] },
+      { text:'去找范增劝他不要操之过急，说"此事还需从长计议"。', tags:['xiaoh','zhoubo','caoshen'] }
+    ]
+  },
+  {
+    text:'项羽分封天下，将齐地一分为三，封田都为齐王、田安为济北王、田市为胶东王，而原齐王田荣一无所获。田荣大怒，起兵反楚。如果你是田荣，起兵后第一步会怎么做？',
+    options:[
+      { text:'先击走田都，再杀田市、田安，统一齐地，然后自立为齐王，公开与项羽叫板。', tags:['tianrong','tianheng','pengyue'] },
+      { text:'派人联络彭越，授予将军印，让他在梁地骚扰楚军后方，自己正面牵制项羽。', tags:['pengyue','tianrong','hanxin'] },
+      { text:'先按兵不动，派人去楚营向项羽谢罪，试探能否保住部分封地。', tags:['liubang','xiaoh','zhangliang'] },
+      { text:'直接投奔项羽帐下效力，以表忠心换取新的封赏。', tags:['xiangyu','longju','fanzeng'] }
+    ]
+  },
+  {
+    text:'彭城一战，刘邦五十六万联军被项羽三万精骑击溃，退至荥阳。此时韩信在北方、英布在淮南、彭越在梁地。如果你是刘邦，最优先做哪件事？',
+    options:[
+      { text:'派随何出使九江，说服英布叛楚归汉，从南面牵制项羽。', tags:['zhangliang','chenping','liubang'] },
+      { text:'拨给韩信三万兵马，让他北上开辟第二战场，攻魏、破代、下赵、取齐。', tags:['hanxin','xiaoh','caoshen'] },
+      { text:'亲自坐镇荥阳，修筑甬道连接敖仓，靠粮食打持久战，同时派周勃、樊哙坚守。', tags:['zhoubo','fankuai','longju'] },
+      { text:'放弃荥阳，退守关中，利用地势重整旗鼓，同时让萧何征发关中兵员。', tags:['xiaoh','zhangliang','lvzhi'] }
+    ]
+  },
+  {
+    text:'韩信攻下齐地，派人向刘邦请求封自己为"假齐王"（代理齐王）。使者到时，刘邦正被项羽围困在荥阳，形势危急。如果你是刘邦，听到这个请求的第一反应是？',
+    options:[
+      { text:'拍案而起，破口大骂："吾困于此，旦暮望若来佐我，乃欲自立为王！"', tags:['xiangyu','fankuai'] },
+      { text:'在张良、陈平暗中踩脚提醒后，立刻改口："大丈夫定诸侯，即为真王耳，何以假为！"', tags:['liubang','zhangliang','chenping'] },
+      { text:'面色铁青但强忍怒火，先答应封王，暗中记下此事，日后寻机夺其兵权。', tags:['lvzhi','xiaoh','zhoubo'] },
+      { text:'劝刘邦先稳住韩信，同时派人去韩信军中分化其部将，以防尾大不掉。', tags:['fanzeng','xiangyu','chenping'] }
+    ]
+  },
+  {
+    text:'楚汉相持于广武，项羽架起大锅，把刘太公绑在砧板上，对刘邦喊："今不急下，吾烹太公！"如果你是刘邦，此时会如何回应？',
+    options:[
+      { text:'从容答道："吾与项羽俱北面受命怀王，约为兄弟，吾翁即若翁。必欲烹而翁，则幸分我一杯羹。"', tags:['liubang','zhangliang','chenping'] },
+      { text:'痛哭流涕，请求项羽放过父亲，愿割地求和，退兵三十里。', tags:['xiangbo','yuji','zhanghan'] },
+      { text:'怒斥项羽不义，发誓破楚之日必报此仇，绝不妥协。', tags:['xiangyu','fankuai','longju'] },
+      { text:'沉默不语，暗中派一支奇兵绕道去救太公，同时假装考虑投降。', tags:['xiaoh','zhoubo','caoshen'] }
+    ]
+  },
+  {
+    text:'垓下之围，韩信、彭越、英布合围，夜闻四面皆楚歌。项羽大惊："汉皆已得楚乎？是何楚人之多也！"如果你是项羽，此时会如何选择？',
+    options:[
+      { text:'率八百骑兵连夜突围，向南疾驰，准备渡淮河回江东再图后举。', tags:['xiangyu','longju','yingbu'] },
+      { text:'与虞姬诀别，悲歌"力拔山兮气盖世，时不利兮骓不逝"，然后率八百骑突围。', tags:['xiangyu','yuji'] },
+      { text:'认为大势已去，无颜见江东父老，拔剑自刎于乌江边。', tags:['xiangyu','tianheng'] },
+      { text:'投降刘邦，以图保全性命，日后或许还有转机。', tags:['liubang','zhanghan','sima'] }
+    ]
+  },
+  {
+    text:'刘邦称帝后论功行赏，认为萧何功劳第一，封酂侯，食邑八千户。武将们不服："臣等身被坚执锐，多者百余战，少者数十合，攻城略地，大小各有差。今萧何未尝有汗马之劳，徒持文墨议论，不战，顾反居臣等上，何也？"如果你是刘邦，会如何说服他们？',
+    options:[
+      { text:'问："诸君知猎乎？夫猎，追杀兽兔者狗也，而发踪指示兽处者人也。今诸君徒能得走兽耳，功狗也。至如萧何，发踪指示，功人也。"', tags:['liubang','xiaoh','zhangliang'] },
+      { text:'坚持己见，直接下诏封赏，不理会武将异议，并说"此非尔等所知"。', tags:['lvzhi','zhoubo','fankuai'] },
+      { text:'让武将们与萧何当面辩论，各陈其功，以理服人，最后投票决定。', tags:['chenping','caoshen','zhangliang'] },
+      { text:'给武将们增加封赏，安抚其心，同时保留萧何第一，并解释"功人"与"功狗"之别。', tags:['liubang','xiaoh','xiangbo'] }
+    ]
+  },
+  {
+    text:'刘邦晚年宠爱戚夫人，认为太子刘盈"仁弱"，欲废之改立戚夫人之子赵王如意。吕后心急如焚，有人建议她去找张良。如果你是吕后，见到张良会怎么说？',
+    options:[
+      { text:'"君常为上谋臣，今上欲易太子，君安得高枕而卧乎？"请张良出谋划策，最终请出商山四皓辅佐太子。', tags:['lvzhi','zhangliang','liubang'] },
+      { text:'联合萧何、周勃、曹参等朝中重臣，联名上书劝谏刘邦，以"嫡长制"祖法为据。', tags:['xiaoh','zhoubo','caoshen'] },
+      { text:'隐忍不发，暗中积蓄力量，等刘邦去世后再彻底清算戚夫人和赵王如意。', tags:['lvzhi','chenping','fanzeng'] },
+      { text:'直接带人去找戚夫人对质，警告她若再争宠，日后必让她生不如死。', tags:['lvzhi','xiangyu'] }
+    ]
+  }
+];
+
+// ============================================================
+// 游戏状态
+// ============================================================
+let currentQuestionIndex = 0;
+let userAnswers = new Array(questions.length).fill(null);
+
+// DOM
+const introArea = document.getElementById('introArea');
+const quizArea = document.getElementById('quizArea');
+const resultArea = document.getElementById('resultArea');
+const startBtn = document.getElementById('startBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const questionText = document.getElementById('questionText');
+const optionsContainer = document.getElementById('optionsContainer');
+const progressText = document.getElementById('progressText');
+const progressFill = document.getElementById('progressFill');
+const resultName = document.getElementById('resultName');
+const resultDesc = document.getElementById('resultDesc');
+const restartBtn = document.getElementById('restartBtn');
+
+function startQuiz() {
+  introArea.classList.add('hidden');
+  quizArea.classList.remove('hidden');
+  resultArea.classList.remove('show');
+  currentQuestionIndex = 0;
+  userAnswers = new Array(questions.length).fill(null);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = questions[currentQuestionIndex];
+  questionText.textContent = q.text;
+  optionsContainer.innerHTML = '';
+
+  q.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    if (userAnswers[currentQuestionIndex] === idx) btn.classList.add('selected');
+    btn.textContent = `${String.fromCharCode(65 + idx)}. ${opt.text}`;
+    btn.addEventListener('click', () => selectOption(idx));
+    optionsContainer.appendChild(btn);
+  });
+
+  progressText.textContent = `${currentQuestionIndex + 1} / ${questions.length}`;
+  progressFill.style.width = `${((currentQuestionIndex + 1) / questions.length) * 100}%`;
+  prevBtn.disabled = (currentQuestionIndex === 0);
+  updateNextButtonState();
+}
+
+function selectOption(idx) {
+  userAnswers[currentQuestionIndex] = idx;
+  renderQuestion();
+}
+
+function updateNextButtonState() {
+  nextBtn.disabled = (userAnswers[currentQuestionIndex] === null);
+  nextBtn.textContent = (currentQuestionIndex === questions.length - 1) ? '查看结果' : '下一题';
+}
+
+function goPrev() {
+  if (currentQuestionIndex > 0) { currentQuestionIndex--; renderQuestion(); }
+}
+
+function goNext() {
+  if (userAnswers[currentQuestionIndex] === null) return;
+  if (currentQuestionIndex === questions.length - 1) showResult();
+  else { currentQuestionIndex++; renderQuestion(); }
+}
+
+// ============================================================
+// 结果匹配：按选项组合 → 统计每个选项携带的 tags 出现次数
+// 出现次数最高的人物为结果；并列时按 priority 裁决。
+// 这保证了"相同选项组合 → 相同结果"，且完全不依赖分数。
+// ============================================================
+function calculateResultByOptions() {
+  const tagCount = {};
+  characters.forEach(c => tagCount[c.id] = 0);
+
+  userAnswers.forEach((ansIdx, qIdx) => {
+    if (ansIdx === null) return;
+    const tags = questions[qIdx].options[ansIdx].tags;
+    tags.forEach(id => { if (tagCount[id] !== undefined) tagCount[id]++; });
+  });
+
+  let maxCount = 0;
+  characters.forEach(c => { if (tagCount[c.id] > maxCount) maxCount = tagCount[c.id]; });
+
+  let candidates = characters.filter(c => tagCount[c.id] === maxCount);
+  candidates.sort((a, b) => a.priority - b.priority);
+  return candidates[0];
+}
+
+function showResult() {
+  if (userAnswers.includes(null)) { alert('请先完成所有题目！'); return; }
+  const winner = calculateResultByOptions();
+  quizArea.classList.add('hidden');
+  resultArea.classList.add('show');
+  resultName.textContent = winner.name;
+  resultDesc.textContent = winner.desc;
+}
+
+function restartQuiz() {
+  resultArea.classList.remove('show');
+  quizArea.classList.add('hidden');
+  introArea.classList.remove('hidden');
+  currentQuestionIndex = 0;
+  userAnswers = new Array(questions.length).fill(null);
+}
+
+startBtn.addEventListener('click', startQuiz);
+prevBtn.addEventListener('click', goPrev);
+nextBtn.addEventListener('click', goNext);
+restartBtn.addEventListener('click', restartQuiz);
+</script>
+</body>
+</html>
